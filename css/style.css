@@ -22,7 +22,7 @@
   --shadow-hover: rgba(233, 30, 99, 0.3);
 
   /* Tipografia */
-  --font-main: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  --font-main: "Poppins", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 
   /* Espaçamentos */
   --spacing-xs: 0.5rem;
