@@ -142,6 +142,10 @@ body {
   width: 100%;
 }
 
+.nav-link.active::after {
+  width: 100%;
+}
+
 /* Menu Mobile */
 .menu-toggle {
   display: none;
@@ -229,6 +233,7 @@ body {
   border: none;
   cursor: pointer;
   font-size: 1rem;
+  font-family: inherit;
 }
 
 .btn-primary {
@@ -302,9 +307,10 @@ body {
 ======================================== */
 .products-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(280px, 320px));
   gap: var(--spacing-md);
   margin-top: var(--spacing-md);
+  justify-content: center;
 }
 
 /* ========================================
@@ -411,6 +417,10 @@ body {
 
 /* Tablets */
 @media (max-width: 768px) {
+  .hero {
+    background-attachment: scroll;
+  }
+
   .hero-title {
     font-size: 2.2rem;
   }
@@ -944,4 +954,119 @@ img {
   .cart-item-price {
     font-size: 1rem;
   }
+}
+
+/* ========================================
+   SKELETON LOADER
+======================================== */
+.skeleton-card {
+  pointer-events: none;
+  animation: none !important;
+}
+
+.skeleton-image {
+  width: 100%;
+  height: 300px;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+.skeleton-line {
+  height: 16px;
+  border-radius: 8px;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  margin-bottom: 10px;
+}
+
+.skeleton-title {
+  width: 70%;
+  height: 20px;
+  margin-top: 4px;
+}
+
+.skeleton-price {
+  width: 40%;
+  height: 24px;
+}
+
+.skeleton-btn {
+  width: 100%;
+  height: 44px;
+  border-radius: 30px;
+  margin-top: 8px;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* ========================================
+   SCROLL TO TOP
+======================================== */
+.scroll-to-top {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(
+    135deg,
+    var(--primary-color),
+    var(--accent-color)
+  );
+  color: var(--white);
+  border: none;
+  border-radius: 50%;
+  font-size: 1.3rem;
+  cursor: pointer;
+  box-shadow: 0 4px 15px var(--shadow-hover);
+  transition: all var(--transition-fast);
+  z-index: 999;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px);
+  font-family: inherit;
+}
+
+.scroll-to-top.visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.scroll-to-top:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px var(--shadow-hover);
+}
+
+/* ========================================
+   FOOTER LINKS
+======================================== */
+.footer-instagram-link {
+  color: #ff006e;
+  text-decoration: none;
+  transition: opacity var(--transition-fast);
+}
+
+.footer-instagram-link:hover {
+  opacity: 0.8;
+}
+
+.footer-admin-link {
+  color: #667eea;
+  text-decoration: none;
+  font-weight: 600;
+  transition: opacity var(--transition-fast);
+}
+
+.footer-admin-link:hover {
+  opacity: 0.8;
 }

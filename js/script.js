@@ -130,6 +130,18 @@ const MenuController = {
           menuToggle.classList.remove("active");
         });
       });
+
+      // Fechar ao clicar fora do menu
+      document.addEventListener("click", (e) => {
+        if (
+          nav.classList.contains("active") &&
+          !nav.contains(e.target) &&
+          !menuToggle.contains(e.target)
+        ) {
+          nav.classList.remove("active");
+          menuToggle.classList.remove("active");
+        }
+      });
     }
   },
 };
@@ -208,6 +220,57 @@ const AnimationController = {
 
       // Observa o card
       observer.observe(card);
+    });
+  },
+};
+
+/**
+ * Controller de Destaque de Nav (Scroll Spy)
+ */
+const NavHighlightController = {
+  init() {
+    const sections = document.querySelectorAll("section[id], footer[id]");
+    const navLinks = document.querySelectorAll(".nav-link");
+
+    if (!sections.length || !navLinks.length) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            navLinks.forEach((link) => link.classList.remove("active"));
+            const activeLink = document.querySelector(
+              `.nav-link[href="#${entry.target.id}"]`,
+            );
+            if (activeLink) activeLink.classList.add("active");
+          }
+        });
+      },
+      { rootMargin: "-30% 0px -60% 0px" },
+    );
+
+    sections.forEach((section) => observer.observe(section));
+  },
+};
+
+/**
+ * Controller do Botão Scroll to Top
+ */
+const ScrollToTopController = {
+  init() {
+    const button = document.getElementById("scroll-to-top");
+    if (!button) return;
+
+    window.addEventListener("scroll", () => {
+      if (window.scrollY > 400) {
+        button.classList.add("visible");
+      } else {
+        button.classList.remove("visible");
+      }
+    });
+
+    button.addEventListener("click", () => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
     });
   },
 };
@@ -428,6 +491,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   ContactController.init();
   ScrollController.init();
   AnimationController.init();
+  NavHighlightController.init();
+  ScrollToTopController.init();
   ImageHelper.init();
 
   // 3. Log de sucesso

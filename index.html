@@ -10,18 +10,18 @@
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Andreza Store - Maquiagens & Pijamas" />
+    <meta property="og:title" content="OutLet MakeUp - Maquiagens & Pijamas" />
     <meta
       property="og:description"
-      content="Loja feminina de maquiagens e pijamas com os melhores produtos e preços"
+      content="Loja feminina de maquiagens, perfumarias e pijamas com os melhores produtos e preços"
     />
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Andreza Store - Maquiagens & Pijamas" />
+    <meta name="twitter:title" content="OutLet MakeUp - Maquiagens & Pijamas" />
     <meta
       name="twitter:description"
-      content="Loja feminina de maquiagens e pijamas com os melhores produtos e preços"
+      content="Loja feminina de maquiagens, perfumarias e pijamas com os melhores produtos e preços"
     />
 
     <link rel="icon" type="image/jpeg" href="images/favicon.jpeg" />
@@ -58,7 +58,9 @@
           aria-label="Carrinho de Compras"
         >
           🛒
-          <span class="cart-badge" id="cart-badge">0</span>
+          <span class="cart-badge" id="cart-badge" style="display: none"
+            >0</span
+          >
         </button>
         <button class="menu-toggle" aria-label="Menu">
           <span></span>
@@ -89,7 +91,30 @@
         </p>
 
         <div class="products-grid" id="makeup-grid">
-          <!-- Produtos carregados dinamicamente do Firebase -->
+          <div class="product-card skeleton-card">
+            <div class="skeleton-image"></div>
+            <div class="product-info">
+              <div class="skeleton-line skeleton-title"></div>
+              <div class="skeleton-line skeleton-price"></div>
+              <div class="skeleton-line skeleton-btn"></div>
+            </div>
+          </div>
+          <div class="product-card skeleton-card">
+            <div class="skeleton-image"></div>
+            <div class="product-info">
+              <div class="skeleton-line skeleton-title"></div>
+              <div class="skeleton-line skeleton-price"></div>
+              <div class="skeleton-line skeleton-btn"></div>
+            </div>
+          </div>
+          <div class="product-card skeleton-card">
+            <div class="skeleton-image"></div>
+            <div class="product-info">
+              <div class="skeleton-line skeleton-title"></div>
+              <div class="skeleton-line skeleton-price"></div>
+              <div class="skeleton-line skeleton-btn"></div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -103,7 +128,30 @@
         </p>
 
         <div class="products-grid" id="pajamas-grid">
-          <!-- Produtos carregados dinamicamente do Firebase -->
+          <div class="product-card skeleton-card">
+            <div class="skeleton-image"></div>
+            <div class="product-info">
+              <div class="skeleton-line skeleton-title"></div>
+              <div class="skeleton-line skeleton-price"></div>
+              <div class="skeleton-line skeleton-btn"></div>
+            </div>
+          </div>
+          <div class="product-card skeleton-card">
+            <div class="skeleton-image"></div>
+            <div class="product-info">
+              <div class="skeleton-line skeleton-title"></div>
+              <div class="skeleton-line skeleton-price"></div>
+              <div class="skeleton-line skeleton-btn"></div>
+            </div>
+          </div>
+          <div class="product-card skeleton-card">
+            <div class="skeleton-image"></div>
+            <div class="product-info">
+              <div class="skeleton-line skeleton-title"></div>
+              <div class="skeleton-line skeleton-price"></div>
+              <div class="skeleton-line skeleton-btn"></div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -176,7 +224,7 @@
               <a
                 href="https://www.instagram.com/outletmakeup.cg/"
                 target="_blank"
-                style="color: #ff006e; text-decoration: none"
+                class="footer-instagram-link"
                 >@outletmakeup.cg</a
               >
             </p>
@@ -187,24 +235,35 @@
             <h4>Atendimento</h4>
             <p>Segunda a Sexta: 9h às 18h</p>
             <p>Sábado: 9h às 14h</p>
-            <a href="#" class="btn btn-whatsapp" id="contact-whatsapp">
+            <button
+              type="button"
+              class="btn btn-whatsapp"
+              id="contact-whatsapp"
+            >
               💬 Fale Conosco no WhatsApp
-            </a>
+            </button>
           </div>
         </div>
 
         <div class="footer-bottom">
           <p>
             &copy; 2026 OutLet MakeUp. Todos os direitos reservados. |
-            <a
-              href="./pages/admin.html"
-              style="color: #667eea; text-decoration: none; font-weight: 600"
+            <a href="./pages/admin.html" class="footer-admin-link"
               >🔐 Acesso Admin</a
             >
           </p>
         </div>
       </div>
     </footer>
+
+    <!-- Botão Scroll to Top -->
+    <button
+      class="scroll-to-top"
+      id="scroll-to-top"
+      aria-label="Voltar ao topo"
+    >
+      ↑
+    </button>
 
     <!-- JavaScript -->
     <!-- FIREBASE SDK -->
