@@ -421,7 +421,7 @@ const ProductRenderer = {
           data-name="${product.name}"
           data-price="${priceFormatted}"
           data-image="${product.image}">
-          🛒 Adicionar ao Carrinho
+          Adicionar ao Carrinho
         </button>
       </div>
     `;
@@ -727,7 +727,7 @@ const CartUIController = {
               </button>
             </div>
             <button class="cart-item-remove" data-name="${item.name}">
-              🗑️ Remover
+              Remover
             </button>
           </div>
         </div>

@@ -64,7 +64,17 @@
   background-clip: text;
   font-weight: 700;
   letter-spacing: 2px;
-  text-shadow: 0 0 20px var(--sexy-glow);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.sexy-shop-header .logo h1 i,
+.sexy-shop-header .logo h1 svg {
+  width: 1.4rem;
+  height: 1.4rem;
+  stroke: var(--sexy-pink);
+  flex-shrink: 0;
 }
 
 .sexy-shop-header .nav-link {
@@ -112,22 +122,20 @@
 
 /* Camada de fundo com padrão geométrico elegante */
 .sexy-hero::after {
-  content: "💋 🌹 💕 ✨ 🔥 💄 👄 💋 🌹 💕 ✨ 🔥 💄 👄 💋 🌹 💕 ✨ 🔥 💄 👄";
+  content: "✦  ✧  ✦  ✧  ✦  ✧  ✦  ✧  ✦  ✧  ✦  ✧  ✦  ✧  ✦  ✧";
   position: absolute;
   top: 0;
   left: 0;
   width: 200%;
   height: 100%;
-  font-size: 3rem;
-  letter-spacing: 4rem;
-  line-height: 8rem;
-  color: rgba(255, 0, 110, 0.15);
+  font-size: 2.5rem;
+  letter-spacing: 5rem;
+  line-height: 9rem;
+  color: rgba(255, 0, 110, 0.12);
   z-index: 0;
   animation: floatIcons 40s linear infinite;
   white-space: pre-wrap;
   word-wrap: break-word;
-  text-shadow: 0 0 20px rgba(255, 0, 110, 0.3);
-  filter: blur(1px);
 }
 
 @keyframes floatIcons {
@@ -323,8 +331,18 @@
 }
 
 .discretion-icon {
-  font-size: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   animation: lockPulse 2s ease-in-out infinite;
+}
+
+.discretion-icon i,
+.discretion-icon svg {
+  width: 2.5rem;
+  height: 2.5rem;
+  color: var(--sexy-pink);
+  stroke: currentColor;
 }
 
 @keyframes lockPulse {
@@ -545,6 +563,16 @@
   font-weight: 700;
   margin-bottom: 1.2rem;
   text-shadow: 0 0 10px rgba(255, 0, 110, 0.3);
+  transition:
+    color 0.3s ease,
+    text-shadow 0.3s ease;
+}
+
+.sexy-card:hover .sexy-price {
+  color: #39ff14;
+  text-shadow:
+    0 0 8px rgba(57, 255, 20, 0.8),
+    0 0 20px rgba(57, 255, 20, 0.4);
 }
 
 /* Botão de Compra */
@@ -628,9 +656,18 @@
 }
 
 .feature-icon {
-  font-size: 2.2rem;
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   margin-bottom: 1rem;
+}
+
+.feature-icon i,
+.feature-icon svg {
+  width: 2.2rem;
+  height: 2.2rem;
+  color: var(--sexy-pink);
+  stroke: currentColor;
 }
 
 .feature-item h4 {
@@ -659,8 +696,32 @@
   color: var(--sexy-pink);
 }
 
+.sexy-footer h3 {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.sexy-footer h3 i,
+.sexy-footer h3 svg {
+  width: 1.2rem;
+  height: 1.2rem;
+  stroke: var(--sexy-pink);
+}
+
 .sexy-footer p {
   color: var(--sexy-light-pink);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.sexy-footer p i,
+.sexy-footer p svg {
+  width: 1rem;
+  height: 1rem;
+  stroke: var(--sexy-pink);
+  flex-shrink: 0;
 }
 
 .sexy-btn-whatsapp {

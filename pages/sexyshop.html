@@ -18,6 +18,7 @@
       rel="stylesheet"
     />
     <title>Sexy Shop - OutLet MakeUp</title>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
     <link rel="stylesheet" href="../css/style.css" />
     <link rel="stylesheet" href="../css/sexyshop.css" />
   </head>
@@ -26,7 +27,7 @@
     <header class="header sexy-shop-header">
       <div class="container">
         <div class="logo">
-          <h1>🔥 Sexy Shop</h1>
+          <h1><i data-lucide="flame"></i> Sexy Shop</h1>
         </div>
         <nav class="nav">
           <a href="../index.html" class="nav-link">Voltar à Loja</a>
@@ -39,8 +40,11 @@
           id="cart-icon"
           aria-label="Carrinho de Compras"
         >
-          🛒
-          <span class="cart-badge" id="cart-badge">0</span>
+          <i data-lucide="shopping-bag"></i>
+          <span>Carrinho</span>
+          <span class="cart-badge" id="cart-badge" style="display: none"
+            >0</span
+          >
         </button>
         <button class="menu-toggle" aria-label="Menu">
           <span></span>
@@ -67,7 +71,9 @@
     <section class="discretion-notice">
       <div class="container">
         <div class="discretion-content">
-          <span class="discretion-icon">🔒</span>
+          <span class="discretion-icon"
+            ><i data-lucide="shield-check"></i
+          ></span>
           <div class="discretion-text">
             <h3>Compra 100% Discreta</h3>
             <p>
@@ -104,22 +110,26 @@
           </p>
           <div class="features-grid">
             <div class="feature-item">
-              <span class="feature-icon">🔒</span>
+              <span class="feature-icon"
+                ><i data-lucide="shield-check"></i
+              ></span>
               <h4>Discrição Total</h4>
               <p>Embalagem neutra sem identificação</p>
             </div>
             <div class="feature-item">
-              <span class="feature-icon">✨</span>
+              <span class="feature-icon"><i data-lucide="sparkles"></i></span>
               <h4>Qualidade Premium</h4>
               <p>Produtos selecionados e certificados</p>
             </div>
             <div class="feature-item">
-              <span class="feature-icon">💳</span>
+              <span class="feature-icon"
+                ><i data-lucide="credit-card"></i
+              ></span>
               <h4>Pagamento Seguro</h4>
               <p>Várias formas de pagamento</p>
             </div>
             <div class="feature-item">
-              <span class="feature-icon">📦</span>
+              <span class="feature-icon"><i data-lucide="package"></i></span>
               <h4>Entrega Rápida</h4>
               <p>Envio para todo Brasil</p>
             </div>
@@ -133,19 +143,23 @@
       <div class="cart-overlay" id="cart-overlay"></div>
       <div class="cart-sidebar">
         <div class="cart-header">
-          <h2>🛒 Meu Carrinho</h2>
+          <h2><i data-lucide="shopping-bag"></i> Meu Carrinho</h2>
           <button
             class="cart-close"
             id="cart-close"
             aria-label="Fechar Carrinho"
           >
-            ✕
+            <i data-lucide="x"></i>
           </button>
         </div>
 
         <div class="cart-body" id="cart-body">
           <div class="cart-empty" id="cart-empty">
-            <p>🛍️ Seu carrinho está vazio</p>
+            <i
+              data-lucide="shopping-bag"
+              style="width: 48px; height: 48px; opacity: 0.3"
+            ></i>
+            <p>Seu carrinho está vazio</p>
             <span>Adicione produtos para continuar comprando!</span>
           </div>
           <div class="cart-items" id="cart-items">
@@ -159,10 +173,10 @@
             <span class="cart-total-value" id="cart-total">R$ 0,00</span>
           </div>
           <button class="btn btn-whatsapp-cart" id="checkout-whatsapp">
-            💬 Finalizar Pedido no WhatsApp
+            <i data-lucide="message-circle"></i> Finalizar Pedido no WhatsApp
           </button>
           <button class="btn btn-clear-cart" id="clear-cart">
-            🗑️ Limpar Carrinho
+            <i data-lucide="trash-2"></i> Limpar Carrinho
           </button>
         </div>
       </div>
@@ -173,13 +187,13 @@
       <div class="container">
         <div class="footer-content">
           <div class="footer-section">
-            <h3>🔥 Sexy Shop</h3>
+            <h3><i data-lucide="flame"></i> Sexy Shop</h3>
             <p>Elegância e sensualidade com discrição total</p>
           </div>
 
           <div class="footer-section">
             <h4>Contato</h4>
-            <p>📱 WhatsApp: (67)99614-9130</p>
+            <p><i data-lucide="phone"></i> (67) 99614-9130</p>
             <p>
               <svg
                 width="16"
@@ -200,7 +214,9 @@
                 >@outletmakeup.cg</a
               >
             </p>
-            <p>🔒 Atendimento discreto e sigiloso</p>
+            <p>
+              <i data-lucide="shield-check"></i> Atendimento discreto e sigiloso
+            </p>
           </div>
 
           <div class="footer-section">
@@ -208,7 +224,7 @@
             <p>Segunda a Sexta: 9h às 18h</p>
             <p>Sábado: 9h às 14h</p>
             <a href="#" class="btn sexy-btn-whatsapp" id="contact-whatsapp">
-              💬 Tire suas dúvidas no WhatsApp
+              <i data-lucide="message-circle"></i> Tire suas dúvidas no WhatsApp
             </a>
           </div>
         </div>
@@ -232,5 +248,8 @@
 
     <!-- Script principal -->
     <script src="../js/script.js"></script>
+    <script>
+      lucide.createIcons();
+    </script>
   </body>
 </html>

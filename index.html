@@ -34,6 +34,8 @@
     />
     <title>OutLet MakeUp</title>
     <link rel="stylesheet" href="css/style.css" />
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   </head>
   <body>
     <!-- HEADER -->
@@ -47,9 +49,9 @@
           <a href="#inicio" class="nav-link">Início</a>
           <a href="#maquiagens" class="nav-link">Maquiagens</a>
           <a href="#pijamas" class="nav-link">Pijamas</a>
-          <a href="pages/sexyshop.html" class="nav-link nav-link-sexy"
-            >🔞 Sexy Shop</a
-          >
+          <a href="pages/sexyshop.html" class="nav-link nav-link-sexy">
+            <i data-lucide="flame"></i> Sexy Shop
+          </a>
           <a href="#contato" class="nav-link">Contato</a>
         </nav>
         <button
@@ -57,7 +59,8 @@
           id="cart-icon"
           aria-label="Carrinho de Compras"
         >
-          🛒
+          <i data-lucide="shopping-bag"></i>
+          <span>Carrinho</span>
           <span class="cart-badge" id="cart-badge" style="display: none"
             >0</span
           >
@@ -85,7 +88,9 @@
     <!-- SEÇÃO MAQUIAGENS -->
     <section id="maquiagens" class="products-section">
       <div class="container">
-        <h2 class="section-title">💄 Maquiagens e Perfumarias</h2>
+        <h2 class="section-title">
+          <i data-lucide="sparkles"></i> Maquiagens e Perfumarias
+        </h2>
         <p class="section-subtitle">
           Realce sua beleza natural com produtos de qualidade
         </p>
@@ -122,7 +127,7 @@
     <!-- SEÇÃO PIJAMAS -->
     <section id="pijamas" class="products-section products-section-alt">
       <div class="container">
-        <h2 class="section-title">🌙 Pijamas</h2>
+        <h2 class="section-title"><i data-lucide="moon"></i> Pijamas</h2>
         <p class="section-subtitle">
           Conforto e estilo para suas noites perfeitas
         </p>
@@ -161,19 +166,20 @@
       <div class="cart-overlay" id="cart-overlay"></div>
       <div class="cart-sidebar">
         <div class="cart-header">
-          <h2>🛒 Meu Carrinho</h2>
+          <h2><i data-lucide="shopping-bag"></i> Meu Carrinho</h2>
           <button
             class="cart-close"
             id="cart-close"
             aria-label="Fechar Carrinho"
           >
-            ✕
+            <i data-lucide="x"></i>
           </button>
         </div>
 
         <div class="cart-body" id="cart-body">
           <div class="cart-empty" id="cart-empty">
-            <p>🛍️ Seu carrinho está vazio</p>
+            <i data-lucide="shopping-bag"></i>
+            <p>Seu carrinho está vazio</p>
             <span>Adicione produtos para continuar comprando!</span>
           </div>
           <div class="cart-items" id="cart-items">
@@ -187,10 +193,10 @@
             <span class="cart-total-value" id="cart-total">R$ 0,00</span>
           </div>
           <button class="btn btn-whatsapp-cart" id="checkout-whatsapp">
-            💬 Finalizar Pedido no WhatsApp
+            <i data-lucide="message-circle"></i> Finalizar no WhatsApp
           </button>
           <button class="btn btn-clear-cart" id="clear-cart">
-            🗑️ Limpar Carrinho
+            <i data-lucide="trash-2"></i> Limpar Carrinho
           </button>
         </div>
       </div>
@@ -201,26 +207,29 @@
       <div class="container">
         <div class="footer-content">
           <div class="footer-section">
-            <h3>✨ OutLet MakeUp</h3>
+            <h3>OutLet MakeUp</h3>
             <p>Sua beleza e conforto em primeiro lugar!</p>
           </div>
 
           <div class="footer-section">
             <h4>Contato</h4>
-            <p>📱 WhatsApp: (67)99614-9130</p>
+            <p><i data-lucide="phone"></i> (67) 99614-9130</p>
             <p>
               <svg
-                width="16"
-                height="16"
-                fill="#ff006e"
+                width="15"
+                height="15"
+                fill="currentColor"
                 viewBox="0 0 24 24"
-                style="margin-right: 8px; vertical-align: middle"
+                style="
+                  flex-shrink: 0;
+                  margin-top: 3px;
+                  color: var(--primary-light);
+                "
               >
                 <path
                   d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"
                 />
               </svg>
-              Instagram:
               <a
                 href="https://www.instagram.com/outletmakeup.cg/"
                 target="_blank"
@@ -228,19 +237,19 @@
                 >@outletmakeup.cg</a
               >
             </p>
-            <p>📍 Campo Grande, MS</p>
+            <p><i data-lucide="map-pin"></i> Campo Grande, MS</p>
           </div>
 
           <div class="footer-section">
             <h4>Atendimento</h4>
-            <p>Segunda a Sexta: 9h às 18h</p>
-            <p>Sábado: 9h às 14h</p>
+            <p><i data-lucide="clock"></i> Seg a Sex: 9h às 18h</p>
+            <p><i data-lucide="clock"></i> Sábado: 9h às 14h</p>
             <button
               type="button"
               class="btn btn-whatsapp"
               id="contact-whatsapp"
             >
-              💬 Fale Conosco no WhatsApp
+              <i data-lucide="message-circle"></i> Fale Conosco no WhatsApp
             </button>
           </div>
         </div>
@@ -249,7 +258,7 @@
           <p>
             &copy; 2026 OutLet MakeUp. Todos os direitos reservados. |
             <a href="./pages/admin.html" class="footer-admin-link"
-              >🔐 Acesso Admin</a
+              ><i data-lucide="lock"></i> Admin</a
             >
           </p>
         </div>
@@ -262,7 +271,7 @@
       id="scroll-to-top"
       aria-label="Voltar ao topo"
     >
-      ↑
+      <i data-lucide="chevron-up"></i>
     </button>
 
     <!-- JavaScript -->
@@ -275,5 +284,8 @@
 
     <!-- Script principal -->
     <script src="js/script.js"></script>
+    <script>
+      lucide.createIcons();
+    </script>
   </body>
 </html>
