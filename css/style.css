@@ -344,6 +344,7 @@ body {
   border-radius: var(--radius-md);
   overflow: hidden;
   border: 1px solid var(--border);
+  box-shadow: 0 4px 16px var(--shadow);
   transition: all var(--transition-medium);
   display: flex;
   flex-direction: column;
@@ -351,7 +352,7 @@ body {
 
 .product-card:hover {
   transform: translateY(-6px);
-  box-shadow: var(--shadow-hover);
+  box-shadow: 0 12px 28px var(--shadow-hover);
   border-color: var(--primary-light);
 }
 
