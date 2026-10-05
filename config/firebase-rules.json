@@ -1,5 +1,24 @@
 {
   "rules": {
+    "categories": {
+      ".read": true,
+      ".write": "auth != null",
+      "$slug": {
+        ".validate": "$slug.matches(/^[a-z0-9-]{1,50}$/) && newData.hasChildren(['name'])",
+        "name": {
+          ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 40"
+        },
+        "icon": {
+          ".validate": "newData.isString() && newData.val().length <= 8"
+        },
+        "createdAt": {
+          ".validate": "newData.isNumber()"
+        },
+        "$other": {
+          ".validate": false
+        }
+      }
+    },
     "products": {
       ".read": true,
       ".write": "auth != null",
@@ -13,7 +32,7 @@
           ".validate": "newData.isString() && newData.val().matches(/^[0-9]+\\.?[0-9]{0,2}$/)"
         },
         "category": {
-          ".validate": "newData.isString() && (newData.val() === 'maquiagem' || newData.val() === 'pijama' || newData.val() === 'sexy-shop')"
+          ".validate": "newData.isString() && newData.val().matches(/^[a-z0-9-]{1,50}$/)"
         },
         "status": {
           ".validate": "newData.isString() && (newData.val() === 'available' || newData.val() === 'unavailable')"

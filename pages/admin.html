@@ -130,6 +130,9 @@
           <button id="btn-add-product" class="btn-primary">
             ➕ Adicionar Novo Produto
           </button>
+          <button id="btn-add-category" class="btn-secondary">
+            🏷️ Nova Categoria
+          </button>
           <button
             id="btn-sync-firebase"
             class="btn-secondary"
@@ -149,9 +152,6 @@
             <label for="filter-category">Filtrar por categoria:</label>
             <select id="filter-category" class="filter-select">
               <option value="all">Todas as Categorias</option>
-              <option value="maquiagem">Maquiagens</option>
-              <option value="pijama">Pijamas</option>
-              <option value="sexy-shop">Sexy Shop</option>
             </select>
           </div>
         </div>
@@ -168,6 +168,51 @@
           </div>
         </div>
       </main>
+    </div>
+
+    <!-- MODAL DE CATEGORIAS -->
+    <div id="category-modal" class="modal" style="display: none">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>🏷️ Categorias</h2>
+          <button id="btn-close-category-modal" class="btn-close-modal">
+            &times;
+          </button>
+        </div>
+
+        <form id="category-form" class="product-form">
+          <div class="form-group">
+            <label for="category-name">Nome da categoria: *</label>
+            <input
+              type="text"
+              id="category-name"
+              placeholder="Ex: Acessórios"
+              maxlength="40"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="category-icon">Ícone (emoji):</label>
+            <input
+              type="text"
+              id="category-icon"
+              placeholder="Ex: 👜"
+              maxlength="4"
+            />
+            <small>Opcional</small>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn-primary">➕ Criar Categoria</button>
+          </div>
+        </form>
+
+        <div class="form-group">
+          <label>Categorias existentes:</label>
+          <div id="category-list"></div>
+        </div>
+      </div>
     </div>
 
     <!-- MODAL DE CADASTRO/EDIÇÃO DE PRODUTO -->
@@ -196,9 +241,6 @@
             <label for="product-category">Categoria: *</label>
             <select id="product-category" required>
               <option value="">Selecione uma categoria</option>
-              <option value="maquiagem">💄 Maquiagens</option>
-              <option value="pijama">👘 Pijamas</option>
-              <option value="sexy-shop">🔥 Sexy Shop</option>
             </select>
             <small>Escolha em qual seção o produto aparecerá</small>
           </div>

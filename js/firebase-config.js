@@ -229,6 +229,92 @@ const FirebaseProductService = {
 };
 
 // ========================================
+// SERVIÇO DE CATEGORIAS (FIREBASE)
+// ========================================
+
+// Categorias padrão (sempre existem, não podem ser removidas)
+const DEFAULT_CATEGORIES = [
+  { slug: "maquiagem", name: "Maquiagens", icon: "💄", builtin: true },
+  { slug: "pijama", name: "Pijamas", icon: "👘", builtin: true },
+  { slug: "sexy-shop", name: "Sexy Shop", icon: "🔥", builtin: true },
+];
+
+const FirebaseCategoryService = {
+  /**
+   * Retorna categorias padrão + categorias criadas pelo admin
+   */
+  async getAll() {
+    const custom = [];
+    try {
+      if (firebaseInitialized) {
+        const snapshot = await database.ref("categories").once("value");
+        const data = snapshot.val() || {};
+        Object.keys(data).forEach((slug) => {
+          custom.push({ slug, ...data[slug], builtin: false });
+        });
+      }
+    } catch (error) {
+      devError("❌ Erro ao buscar categorias:", error);
+    }
+    const known = new Set(DEFAULT_CATEGORIES.map((c) => c.slug));
+    return [...DEFAULT_CATEGORIES, ...custom.filter((c) => !known.has(c.slug))];
+  },
+
+  /**
+   * Cria uma nova categoria
+   */
+  async add(name, icon) {
+    try {
+      if (!firebaseInitialized) throw new Error("Firebase não inicializado");
+
+      const cleanName = String(name || "").trim();
+      if (!cleanName) throw new Error("Informe o nome da categoria");
+
+      const slug = cleanName
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[̀-ͯ]/g, "")
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "");
+      if (!slug) throw new Error("Nome de categoria inválido");
+
+      const all = await this.getAll();
+      if (all.some((c) => c.slug === slug)) {
+        throw new Error("Já existe uma categoria com esse nome");
+      }
+
+      await database.ref(`categories/${slug}`).set({
+        name: cleanName,
+        icon: String(icon || "").trim() || "🏷️",
+        createdAt: Date.now(),
+      });
+
+      return { success: true, slug };
+    } catch (error) {
+      devError("❌ Erro ao criar categoria:", error);
+      return { success: false, error: error.message };
+    }
+  },
+
+  /**
+   * Remove uma categoria criada pelo admin
+   */
+  async remove(slug) {
+    try {
+      if (!firebaseInitialized) throw new Error("Firebase não inicializado");
+      if (DEFAULT_CATEGORIES.some((c) => c.slug === slug)) {
+        throw new Error("Categorias padrão não podem ser removidas");
+      }
+      await database.ref(`categories/${slug}`).remove();
+      return { success: true };
+    } catch (error) {
+      devError("❌ Erro ao remover categoria:", error);
+      return { success: false, error: error.message };
+    }
+  },
+};
+
+// ========================================
 // MIGRAÇÃO DE LOCALSTORAGE PARA FIREBASE
 // ========================================
 
@@ -261,5 +347,6 @@ async function migrateFromLocalStorage() {
 
 // Exporta para uso global
 window.FirebaseProductService = FirebaseProductService;
+window.FirebaseCategoryService = FirebaseCategoryService;
 window.initFirebase = initFirebase;
 window.migrateFromLocalStorage = migrateFromLocalStorage;

@@ -308,12 +308,73 @@ async function loadDynamicProducts() {
       await loadProductsByCategory(availableProducts, "pijama", "pajamas-grid");
     }
 
+    // Categorias criadas pelo admin (seções geradas dinamicamente)
+    if (document.getElementById("pajamas-grid")) {
+      await loadCustomCategorySections(availableProducts);
+    }
+
     // Página Sexy Shop - carrega todas as categorias de sexy-shop
     if (document.querySelector(".sexy-shop-body")) {
       await loadSexyShopProducts(availableProducts);
     }
   } catch (error) {
     devError("❌ Erro ao carregar produtos:", error);
+  }
+}
+
+/**
+ * Cria seções (e links no menu) para categorias criadas pelo admin
+ */
+async function loadCustomCategorySections(products) {
+  if (!window.FirebaseCategoryService || !window.firebaseInitialized) return;
+
+  const categories = (await window.FirebaseCategoryService.getAll()).filter(
+    (c) => !c.builtin,
+  );
+  const anchor = document.getElementById("pijamas");
+  const nav = document.querySelector(".nav");
+  if (!anchor || categories.length === 0) return;
+
+  let previous = anchor;
+  categories.forEach((cat, index) => {
+    const catProducts = products.filter((p) => p.category === cat.slug);
+    if (catProducts.length === 0) return;
+
+    const sectionId = `cat-${cat.slug}`;
+    document.getElementById(sectionId)?.remove();
+
+    const section = document.createElement("section");
+    section.id = sectionId;
+    section.className =
+      "products-section" + (index % 2 === 0 ? "" : " products-section-alt");
+
+    const container = document.createElement("div");
+    container.className = "container";
+    const title = document.createElement("h2");
+    title.className = "section-title";
+    title.textContent = `${cat.icon} ${cat.name}`;
+    const grid = document.createElement("div");
+    grid.className = "products-grid";
+    container.append(title, grid);
+    section.appendChild(container);
+
+    catProducts.forEach((p) => grid.appendChild(ProductRenderer.createCard(p, false)));
+
+    previous.after(section);
+    previous = section;
+
+    if (nav && !nav.querySelector(`a[href="#${sectionId}"]`)) {
+      const link = document.createElement("a");
+      link.href = `#${sectionId}`;
+      link.className = "nav-link";
+      link.textContent = cat.name;
+      const contato = nav.querySelector('a[href="#contato"]');
+      nav.insertBefore(link, contato || null);
+    }
+  });
+
+  if (window.CartUIController) {
+    window.CartUIController.attachCartButtons();
   }
 }
 

@@ -306,16 +306,142 @@ document.addEventListener("DOMContentLoaded", async function () {
   if (firebaseReady) {
     devLog("✅ Firebase conectado!");
     await initializeProducts();
+    await loadCategories();
   } else {
     devWarn("⚠️ Firebase não configurado. Usando LocalStorage como fallback.");
     devLog(
       "💡 Configure o Firebase seguindo as instruções em firebase-config.js",
     );
+    await loadCategories();
   }
 
   checkLogin();
   setupEventListeners();
 });
+
+// ========================================
+// CATEGORIAS
+// ========================================
+let categoriesCache = [...DEFAULT_CATEGORIES];
+
+function escapeHtml(value) {
+  const div = document.createElement("div");
+  div.textContent = value == null ? "" : String(value);
+  return div.innerHTML;
+}
+
+async function loadCategories() {
+  try {
+    if (window.FirebaseCategoryService) {
+      categoriesCache = await window.FirebaseCategoryService.getAll();
+    }
+  } catch (error) {
+    devError("Erro ao carregar categorias:", error);
+  }
+  renderCategoryOptions();
+  renderCategoryList();
+}
+
+function renderCategoryOptions() {
+  const productSelect = document.getElementById("product-category");
+  const filterSelect = document.getElementById("filter-category");
+
+  [
+    [productSelect, "Selecione uma categoria", ""],
+    [filterSelect, "Todas as Categorias", "all"],
+  ].forEach(([select, placeholder, placeholderValue]) => {
+    if (!select) return;
+    const current = select.value;
+    select.innerHTML = "";
+    select.add(new Option(placeholder, placeholderValue));
+    categoriesCache.forEach((c) => {
+      const label = select === productSelect ? `${c.icon} ${c.name}` : c.name;
+      select.add(new Option(label, c.slug));
+    });
+    if (categoriesCache.some((c) => c.slug === current) || current === "all") {
+      select.value = current;
+    }
+  });
+}
+
+function renderCategoryList() {
+  const list = document.getElementById("category-list");
+  if (!list) return;
+  list.innerHTML = "";
+  categoriesCache.forEach((c) => {
+    const row = document.createElement("div");
+    row.style.cssText =
+      "display:flex;justify-content:space-between;align-items:center;padding:6px 0;";
+    const label = document.createElement("span");
+    label.textContent = `${c.icon} ${c.name}`;
+    row.appendChild(label);
+    if (!c.builtin) {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "btn-small btn-delete";
+      btn.dataset.slug = c.slug;
+      btn.textContent = "🗑️ Excluir";
+      row.appendChild(btn);
+    }
+    list.appendChild(row);
+  });
+}
+
+function openCategoryModal() {
+  document.getElementById("category-form").reset();
+  document.getElementById("category-modal").style.display = "flex";
+}
+
+function closeCategoryModal() {
+  document.getElementById("category-modal").style.display = "none";
+}
+
+async function handleSaveCategory(e) {
+  e.preventDefault();
+  const name = document.getElementById("category-name").value;
+  const icon = document.getElementById("category-icon").value;
+
+  if (!window.FirebaseCategoryService || !window.firebaseInitialized) {
+    showNotification("❌ Firebase não está disponível.", "error");
+    return;
+  }
+
+  const result = await window.FirebaseCategoryService.add(name, icon);
+  if (!result.success) {
+    showNotification(`❌ ${result.error}`, "error");
+    return;
+  }
+
+  showNotification("✅ Categoria criada com sucesso!", "success");
+  document.getElementById("category-form").reset();
+  await loadCategories();
+}
+
+async function handleCategoryListClick(e) {
+  const btn = e.target.closest("button[data-slug]");
+  if (!btn) return;
+  const slug = btn.dataset.slug;
+
+  const inUse = (await getProductsFromFirebase()).some(
+    (p) => p.category === slug,
+  );
+  if (inUse) {
+    showNotification(
+      "❌ Existem produtos nesta categoria. Mova ou exclua-os antes.",
+      "error",
+    );
+    return;
+  }
+  if (!confirm("Excluir esta categoria?")) return;
+
+  const result = await window.FirebaseCategoryService.remove(slug);
+  if (!result.success) {
+    showNotification(`❌ ${result.error}`, "error");
+    return;
+  }
+  showNotification("✅ Categoria excluída!", "success");
+  await loadCategories();
+}
 
 // ========================================
 // SETUP DE EVENT LISTENERS
@@ -338,6 +464,20 @@ function setupEventListeners() {
   if (btnAddProduct) {
     btnAddProduct.addEventListener("click", openAddProductModal);
   }
+
+  // Categorias
+  document
+    .getElementById("btn-add-category")
+    ?.addEventListener("click", openCategoryModal);
+  document
+    .getElementById("btn-close-category-modal")
+    ?.addEventListener("click", closeCategoryModal);
+  document
+    .getElementById("category-form")
+    ?.addEventListener("submit", handleSaveCategory);
+  document
+    .getElementById("category-list")
+    ?.addEventListener("click", handleCategoryListClick);
 
   // Fechar modal
   const btnCloseModal = document.getElementById("btn-close-modal");
@@ -597,18 +737,17 @@ function createProductItem(product) {
   div.className = `product-item ${product.soldOut ? "sold-out" : ""}`;
   div.dataset.id = product.id;
 
-  const categoryLabels = {
-    maquiagem: "💄 Maquiagens",
-    pijama: "👘 Pijamas",
-    "sexy-shop": "🔥 Sexy Shop",
-  };
+  const cat = categoriesCache.find((c) => c.slug === product.category);
+  const categoryLabel = cat
+    ? `${cat.icon} ${cat.name}`
+    : product.category || "Sem categoria";
 
   div.innerHTML = `
     <img src="${product.image}" alt="${product.name}" class="product-image" />
     
     <div class="product-info">
       <h3>${product.name}</h3>
-      <span class="product-category">${categoryLabels[product.category]}</span>
+      <span class="product-category">${escapeHtml(categoryLabel)}</span>
       <div class="product-price">R$ ${product.price}</div>
       <span class="product-status ${product.soldOut ? "status-sold-out" : "status-available"}">
         ${product.soldOut ? "❌ Esgotado" : "✅ Disponível"}
