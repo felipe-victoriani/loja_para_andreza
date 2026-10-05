@@ -203,21 +203,20 @@ const FirebaseProductService = {
         throw new Error("Firebase não inicializado");
       }
 
-      // Remove produtos antigos
-      await database.ref("products").remove();
-
-      // Adiciona novos produtos
-      const updates = {};
+      // Grava a lista inteira em uma única operação atômica:
+      // se alguma regra rejeitar, os produtos antigos permanecem intactos.
+      const all = {};
       products.forEach((product) => {
+        const { firebaseKey, ...data } = product;
         const newKey = database.ref().child("products").push().key;
-        updates[`products/${newKey}`] = {
-          ...product,
+        all[newKey] = {
+          ...data,
           createdAt: Date.now(),
           updatedAt: Date.now(),
         };
       });
 
-      await database.ref().update(updates);
+      await database.ref("products").set(all);
 
       devLog(`✅ ${products.length} produtos salvos com sucesso!`);
       return { success: true };

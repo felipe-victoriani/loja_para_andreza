@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(firebase database:get /products --project andreza-loja)",
+      "Bash(firebase database:get /categories --project andreza-loja)"
+    ]
+  }
+}

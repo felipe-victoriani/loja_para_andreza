@@ -29,16 +29,16 @@
           ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 100"
         },
         "price": {
-          ".validate": "newData.isString() && newData.val().matches(/^[0-9]+\\.?[0-9]{0,2}$/)"
+          ".validate": "newData.isString() && newData.val().matches(/^[0-9]+([.,][0-9]{1,2})?$/)"
         },
         "category": {
           ".validate": "newData.isString() && newData.val().matches(/^[a-z0-9-]{1,50}$/)"
         },
         "status": {
-          ".validate": "newData.isString() && (newData.val() === 'available' || newData.val() === 'unavailable')"
+          ".validate": "newData.isString() && (newData.val() === 'available' || newData.val() === 'unavailable' || newData.val() === 'sold-out')"
         },
         "image": {
-          ".validate": "newData.isString() && newData.val().matches(/^https?:\\/\\/.+/)"
+          ".validate": "newData.isString() && newData.val().length <= 900000 && (newData.val().matches(/^https?:\\/\\/.+/) || newData.val().matches(/^data:image\\/.+/))"
         },
         "soldOut": {
           ".validate": "newData.isBoolean()"
