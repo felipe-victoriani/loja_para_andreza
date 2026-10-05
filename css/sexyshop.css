@@ -802,8 +802,16 @@
   }
 
   .sexy-grid {
-    grid-template-columns: 1fr;
-    gap: 2rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+  }
+
+  .sexy-image {
+    height: 160px;
+  }
+
+  .sexy-info {
+    padding: 0.6rem;
   }
 
   .discretion-content {

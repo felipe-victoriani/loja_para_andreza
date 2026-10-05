@@ -484,8 +484,30 @@ body {
   }
 
   .products-grid {
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: var(--spacing-sm);
+  }
+
+  .product-image {
+    height: 180px;
+  }
+
+  .product-info {
+    padding: 0.6rem;
+  }
+
+  .product-name {
+    font-size: 0.85rem;
+  }
+
+  .product-price {
+    font-size: 1.05rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .btn-add-to-cart {
+    padding: 0.6rem 0.5rem;
+    font-size: 0.75rem;
   }
 
   .nav {
@@ -533,7 +555,8 @@ body {
   }
 
   .products-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.5rem;
   }
 
   .logo h1 {
@@ -541,7 +564,7 @@ body {
   }
 
   .product-image {
-    height: 250px;
+    height: 160px;
   }
 
   .footer-content {
