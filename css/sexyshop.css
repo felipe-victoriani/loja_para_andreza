@@ -453,11 +453,69 @@
 
 .sexy-card:hover::before {
   opacity: 1;
+  /* Borda em brasa no lugar do degradê rosa */
+  background: linear-gradient(0deg, #ff3d00, #ff9100 60%, #ffd54f);
 }
 
 .sexy-card:hover {
   transform: translateY(-10px) scale(1.02);
-  box-shadow: 0 15px 40px var(--sexy-glow);
+  border-color: rgba(255, 145, 0, 0.8);
+  animation: cardFireGlow 0.9s ease-in-out infinite alternate;
+}
+
+/* Chamas subindo pela base do card */
+.sexy-card::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 45%;
+  background:
+    radial-gradient(ellipse at 20% 100%, rgba(255, 61, 0, 0.75), transparent 55%),
+    radial-gradient(ellipse at 55% 100%, rgba(255, 145, 0, 0.8), transparent 50%),
+    radial-gradient(ellipse at 85% 100%, rgba(255, 213, 79, 0.6), transparent 55%);
+  opacity: 0;
+  transform-origin: 50% 100%;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+  mix-blend-mode: screen;
+}
+
+.sexy-card:hover::after {
+  opacity: 1;
+  animation: cardFlames 0.6s ease-in-out infinite alternate;
+}
+
+@keyframes cardFireGlow {
+  from {
+    box-shadow:
+      0 12px 30px rgba(255, 61, 0, 0.5),
+      0 0 18px rgba(255, 109, 0, 0.5);
+  }
+  to {
+    box-shadow:
+      0 15px 45px rgba(255, 145, 0, 0.75),
+      0 0 30px rgba(255, 61, 0, 0.7);
+  }
+}
+
+@keyframes cardFlames {
+  from {
+    transform: scaleY(0.85) scaleX(1);
+    filter: brightness(1);
+  }
+  to {
+    transform: scaleY(1.15) scaleX(1.05);
+    filter: brightness(1.25);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sexy-card:hover,
+  .sexy-card:hover::after {
+    animation: none;
+  }
 }
 
 /* Badge */

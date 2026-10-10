@@ -163,14 +163,104 @@ body {
   font-weight: 600;
 }
 
+.nav-link-sexy {
+  position: relative;
+  overflow: visible;
+  transition:
+    background 0.3s ease,
+    box-shadow 0.3s ease,
+    color 0.3s ease;
+}
+
+/* Hover: fundo em brasa + brilho de fogo pulsando */
 .nav-link-sexy:hover {
-  background-color: var(--primary-color);
+  background: linear-gradient(0deg, #ff3d00, #ff9100 70%, #ffd54f);
   color: var(--white);
+  animation: fireGlow 0.9s ease-in-out infinite alternate;
 }
 
 .nav-link-sexy i {
   width: 14px;
   height: 14px;
+}
+
+/* Chama do ícone tremula */
+.nav-link-sexy:hover i {
+  animation: flameFlicker 0.35s ease-in-out infinite alternate;
+  transform-origin: 50% 100%;
+}
+
+/* Faíscas subindo */
+.nav-link-sexy::before,
+.nav-link-sexy::after {
+  content: "";
+  position: absolute;
+  bottom: 70%;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #ffb300;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.nav-link-sexy::before {
+  left: 25%;
+}
+
+.nav-link-sexy::after {
+  left: 65%;
+  background: #ff6d00;
+}
+
+.nav-link-sexy:hover::before {
+  animation: emberRise 1s ease-out infinite;
+}
+
+.nav-link-sexy:hover::after {
+  animation: emberRise 1.2s ease-out 0.4s infinite;
+}
+
+@keyframes fireGlow {
+  from {
+    box-shadow:
+      0 0 6px rgba(255, 109, 0, 0.6),
+      0 -2px 12px rgba(255, 61, 0, 0.5);
+  }
+  to {
+    box-shadow:
+      0 0 12px rgba(255, 145, 0, 0.9),
+      0 -4px 20px rgba(255, 61, 0, 0.8);
+  }
+}
+
+@keyframes flameFlicker {
+  from {
+    transform: scale(1) rotate(-6deg);
+  }
+  to {
+    transform: scale(1.25, 1.4) rotate(6deg);
+  }
+}
+
+@keyframes emberRise {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 0.9;
+  }
+  100% {
+    transform: translateY(-22px) scale(0.2);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-link-sexy:hover,
+  .nav-link-sexy:hover i,
+  .nav-link-sexy:hover::before,
+  .nav-link-sexy:hover::after {
+    animation: none;
+  }
 }
 
 /* Menu Mobile */
