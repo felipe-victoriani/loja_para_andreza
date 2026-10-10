@@ -21,6 +21,23 @@
   margin: 0 auto;
 }
 
+/* Vídeo demonstrativo (16:9), centralizado e sem sombra pesada */
+.palette-video {
+  padding: var(--spacing-md) 0 0;
+}
+
+.palette-video-player {
+  display: block;
+  width: 100%;
+  max-width: 720px;
+  aspect-ratio: 16 / 9;
+  margin: 0 auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--dark-text);
+  object-fit: cover;
+}
+
 .palette-step {
   padding: var(--spacing-lg) 0;
 }

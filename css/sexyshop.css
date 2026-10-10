@@ -785,11 +785,12 @@
 .sexy-btn-whatsapp {
   background: linear-gradient(135deg, var(--sexy-pink), var(--sexy-magenta));
   color: var(--white);
-  padding: 0.8rem 1.5rem;
+  padding: 0.45rem 1rem;
+  font-size: 0.8rem;
   border-radius: 30px;
   text-decoration: none;
   display: inline-block;
-  margin-top: 1rem;
+  margin-top: 0.4rem;
   font-weight: 600;
   transition: all 0.3s ease;
   box-shadow: 0 4px 15px rgba(255, 0, 110, 0.4);
@@ -803,8 +804,8 @@
 
 .sexy-footer .footer-bottom {
   border-top: 1px solid rgba(255, 0, 110, 0.3);
-  margin-top: 2rem;
-  padding-top: 2rem;
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
 }
 
 .sexy-footer .footer-bottom p {
