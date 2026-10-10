@@ -157,13 +157,62 @@ body {
   font-weight: 600;
 }
 
+/* Categorias do admin: container some do layout, links ficam no flex do nav */
+.nav-categories {
+  display: contents;
+}
+
+/* Dropdown "Mais" (desktop) */
+.nav-more {
+  position: relative;
+}
+
+.nav-more-toggle {
+  background: none;
+  border: 0;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.nav-more-caret {
+  font-size: 0.7rem;
+  transition: transform var(--transition-fast);
+}
+
+.nav-more:hover .nav-more-caret,
+.nav-more.open .nav-more-caret {
+  transform: rotate(180deg);
+}
+
+.nav-more-menu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  min-width: 180px;
+  flex-direction: column;
+  padding: 0.375rem;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-sm);
+  z-index: 1001;
+}
+
+.nav-more:hover .nav-more-menu,
+.nav-more:focus-within .nav-more-menu,
+.nav-more.open .nav-more-menu {
+  display: flex;
+}
+
+.nav-more-menu .nav-link {
+  white-space: nowrap;
+}
+
 .nav-link-sexy {
   color: var(--primary-dark);
   background-color: var(--primary-soft);
   font-weight: 600;
-}
-
-.nav-link-sexy {
   position: relative;
   overflow: visible;
   transition:
@@ -622,6 +671,28 @@ body {
     border-bottom: 1px solid var(--border);
     box-shadow: var(--shadow);
     z-index: 999;
+    max-height: calc(100vh - 70px);
+    overflow-y: auto;
+  }
+
+  /* Mobile: dropdown vira lista simples, sem botão "Mais" */
+  .nav-categories {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+  }
+
+  .nav-more-toggle {
+    display: none;
+  }
+
+  .nav-more-menu {
+    display: flex;
+    position: static;
+    min-width: 0;
+    padding: 0;
+    border: 0;
+    box-shadow: none;
   }
 }
 

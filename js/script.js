@@ -147,6 +147,97 @@ const MenuController = {
 };
 
 /**
+ * Links das categorias do admin no header.
+ * Renderiza do cache (localStorage) na hora, sem esperar o Firebase,
+ * e só redesenha quando a lista real for diferente do cache.
+ * Acima de MAX_INLINE, o excedente vai para o dropdown "Mais".
+ */
+const NavCategories = {
+  KEY: "outlet_nav_categories_v1",
+  MAX_INLINE: 2,
+  current: null,
+
+  load() {
+    try {
+      const data = JSON.parse(localStorage.getItem(this.KEY));
+      return Array.isArray(data) ? data : [];
+    } catch {
+      return [];
+    }
+  },
+
+  save(items) {
+    try {
+      localStorage.setItem(this.KEY, JSON.stringify(items));
+    } catch {
+      // storage indisponível: o menu só perde o cache
+    }
+  },
+
+  /**
+   * Desenha os links. items = [{ slug, name }]
+   */
+  render(items) {
+    const box = document.getElementById("nav-categories");
+    if (!box) return;
+
+    const signature = JSON.stringify(items);
+    if (signature === this.current) return;
+    this.current = signature;
+    box.replaceChildren();
+
+    const makeLink = ({ slug, name }) => {
+      const link = document.createElement("a");
+      link.href = `#cat-${slug}`;
+      link.className = "nav-link";
+      link.textContent = name;
+      return link;
+    };
+
+    items.slice(0, this.MAX_INLINE).forEach((it) => box.appendChild(makeLink(it)));
+
+    const extra = items.slice(this.MAX_INLINE);
+    if (extra.length === 0) return;
+
+    const more = document.createElement("div");
+    more.className = "nav-more";
+
+    const toggle = document.createElement("button");
+    toggle.type = "button";
+    toggle.className = "nav-link nav-more-toggle";
+    toggle.setAttribute("aria-haspopup", "true");
+    toggle.setAttribute("aria-expanded", "false");
+    toggle.innerHTML = 'Mais <span class="nav-more-caret" aria-hidden="true">▾</span>';
+
+    const menu = document.createElement("div");
+    menu.className = "nav-more-menu";
+    extra.forEach((it) => menu.appendChild(makeLink(it)));
+
+    more.append(toggle, menu);
+    box.appendChild(more);
+  },
+
+  /**
+   * Abre/fecha o dropdown por clique (delegado: funciona após re-render)
+   */
+  initDropdown() {
+    document.addEventListener("click", (e) => {
+      const toggle = e.target.closest(".nav-more-toggle");
+      document.querySelectorAll(".nav-more.open").forEach((el) => {
+        if (!toggle || el !== toggle.parentElement) {
+          el.classList.remove("open");
+          el.querySelector(".nav-more-toggle")?.setAttribute("aria-expanded", "false");
+        }
+      });
+      if (toggle) {
+        const open = toggle.parentElement.classList.toggle("open");
+        toggle.setAttribute("aria-expanded", String(open));
+      }
+    });
+  },
+};
+
+/**
  * Controller de Contato
  */
 const ContactController = {
@@ -284,7 +375,11 @@ const ScrollToTopController = {
  */
 async function loadDynamicProducts() {
   try {
-    const products = await ProductService.getAll();
+    // Produtos e categorias em paralelo (antes eram sequenciais)
+    const [products, categories] = await Promise.all([
+      ProductService.getAll(),
+      loadCustomCategories(),
+    ]);
 
     // Filtra apenas produtos disponíveis (não esgotados)
     const availableProducts = products.filter(
@@ -310,7 +405,7 @@ async function loadDynamicProducts() {
 
     // Categorias criadas pelo admin (seções geradas dinamicamente)
     if (document.getElementById("pajamas-grid")) {
-      await loadCustomCategorySections(availableProducts);
+      loadCustomCategorySections(availableProducts, categories);
     }
 
     // Página Sexy Shop - carrega todas as categorias de sexy-shop
@@ -325,20 +420,29 @@ async function loadDynamicProducts() {
 /**
  * Cria seções (e links no menu) para categorias criadas pelo admin
  */
-async function loadCustomCategorySections(products) {
-  if (!window.FirebaseCategoryService || !window.firebaseInitialized) return;
+async function loadCustomCategories() {
+  if (!window.FirebaseCategoryService || !window.firebaseInitialized) return [];
+  const all = await window.FirebaseCategoryService.getAll();
+  return all.filter((c) => !c.builtin);
+}
 
-  const categories = (await window.FirebaseCategoryService.getAll()).filter(
-    (c) => !c.builtin,
-  );
+/**
+ * Cria seções para categorias do admin e atualiza links do header
+ */
+function loadCustomCategorySections(products, categories) {
   const anchor = document.getElementById("pijamas");
-  const nav = document.querySelector(".nav");
-  if (!anchor || categories.length === 0) return;
+  if (!anchor) return;
+
+  // Só categorias com produtos entram no menu; cache evita delay na próxima visita
+  const withProducts = categories.filter((cat) =>
+    products.some((p) => p.category === cat.slug),
+  );
+  NavCategories.render(withProducts.map(({ slug, name }) => ({ slug, name })));
+  NavCategories.save(withProducts.map(({ slug, name }) => ({ slug, name })));
 
   let previous = anchor;
-  categories.forEach((cat, index) => {
+  withProducts.forEach((cat, index) => {
     const catProducts = products.filter((p) => p.category === cat.slug);
-    if (catProducts.length === 0) return;
 
     const sectionId = `cat-${cat.slug}`;
     document.getElementById(sectionId)?.remove();
@@ -362,15 +466,6 @@ async function loadCustomCategorySections(products) {
 
     previous.after(section);
     previous = section;
-
-    if (nav && !nav.querySelector(`a[href="#${sectionId}"]`)) {
-      const link = document.createElement("a");
-      link.href = `#${sectionId}`;
-      link.className = "nav-link";
-      link.textContent = cat.name;
-      const contato = nav.querySelector('a[href="#contato"]');
-      nav.insertBefore(link, contato || null);
-    }
   });
 
   if (window.CartUIController) {
@@ -532,6 +627,10 @@ const ImageHelper = {
  */
 document.addEventListener("DOMContentLoaded", async () => {
   devLog("🚀 Iniciando carregamento da página...");
+
+  // Header instantâneo: desenha as categorias do cache antes do Firebase
+  NavCategories.render(NavCategories.load());
+  NavCategories.initDropdown();
 
   // 0. Inicializar Firebase (se disponível)
   if (window.initFirebase) {
