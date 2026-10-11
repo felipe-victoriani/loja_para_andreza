@@ -141,6 +141,13 @@
             🔄 Sincronizar Firebase
           </button>
           <button
+            id="btn-recompress"
+            class="btn-secondary"
+            title="Reduz o tamanho das imagens já cadastradas para o site carregar mais rápido"
+          >
+            🗜️ Otimizar Imagens
+          </button>
+          <button
             id="btn-import-initial"
             class="btn-warning"
             title="Importar produtos de exemplo (use apenas se quiser exemplos)"
@@ -262,7 +269,7 @@
             <label for="product-image">Imagem do Produto: *</label>
             <input type="file" id="product-image" accept="image/*" required />
             <small
-              >Escolha uma imagem do seu computador (JPG, PNG ou GIF)</small
+              >Escolha uma imagem do seu computador (JPG, PNG ou GIF). Ela é reduzida automaticamente.</small
             >
             <div id="image-preview" class="image-preview" style="display: none">
               <img id="preview-img" src="" alt="Preview" />

@@ -250,6 +250,23 @@ const INITIAL_PRODUCTS = [
   },
 ];
 
+/**
+ * Cache local dos produtos. Imagens em base64 estouram a cota (~5MB) do
+ * localStorage; o Firebase é a fonte da verdade, então falhar aqui é inofensivo.
+ */
+function cacheProducts(products) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(products));
+  } catch (error) {
+    devWarn("⚠️ Cache local cheio, usando só o Firebase:", error.name);
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+    } catch {
+      // storage indisponível
+    }
+  }
+}
+
 // ========================================
 // IMPORTAÇÃO INICIAL
 // ========================================
@@ -285,13 +302,13 @@ async function initializeProducts() {
 
     // Sincroniza Firebase com LocalStorage
     const finalProducts = await FirebaseProductService.getAll();
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(finalProducts));
+    cacheProducts(finalProducts);
   } catch (error) {
     devError("Erro ao inicializar produtos:", error);
     // Fallback para LocalStorage
     const existingProducts = localStorage.getItem(STORAGE_KEY);
     if (!existingProducts || existingProducts === "[]") {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(INITIAL_PRODUCTS));
+      cacheProducts(INITIAL_PRODUCTS);
     }
   }
 }
@@ -300,6 +317,12 @@ async function initializeProducts() {
 // INICIALIZAÇÃO
 // ========================================
 document.addEventListener("DOMContentLoaded", async function () {
+  // Botões e opções de categoria não podem depender do Firebase responder:
+  // liga os eventos e desenha as categorias padrão antes de qualquer await
+  setupEventListeners();
+  renderCategoryOptions();
+  renderCategoryList();
+
   // Inicializa Firebase primeiro
   const firebaseReady = initFirebase();
 
@@ -316,7 +339,6 @@ document.addEventListener("DOMContentLoaded", async function () {
   }
 
   checkLogin();
-  setupEventListeners();
 });
 
 // ========================================
@@ -508,6 +530,11 @@ function setupEventListeners() {
     btnSyncFirebase.addEventListener("click", syncAllToFirebase);
   }
 
+  // Otimizar imagens já cadastradas
+  document
+    .getElementById("btn-recompress")
+    ?.addEventListener("click", recompressExistingImages);
+
   // Botão de importar produtos iniciais
   const btnImportInitial = document.getElementById("btn-import-initial");
   if (btnImportInitial) {
@@ -666,7 +693,7 @@ async function getProductsFromFirebase() {
 
       // Sincroniza com LocalStorage
       if (fbProducts.length > 0) {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(fbProducts));
+        cacheProducts(fbProducts);
         return fbProducts;
       }
     } catch (error) {
@@ -678,21 +705,6 @@ async function getProductsFromFirebase() {
   const localProducts = getProducts();
   devLog("📦 Produtos do LocalStorage:", localProducts);
   return localProducts;
-}
-
-async function saveProducts(products) {
-  // Salva no localStorage (backup)
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(products));
-
-  // Salva no Firebase
-  if (window.FirebaseProductService && window.firebaseInitialized) {
-    try {
-      await window.FirebaseProductService.saveAll(products);
-      devLog("✅ Produtos salvos no Firebase!");
-    } catch (error) {
-      devError("❌ Erro ao salvar no Firebase:", error);
-    }
-  }
 }
 
 function loadProducts() {
@@ -771,6 +783,9 @@ function createProductItem(product) {
 }
 
 function openAddProductModal() {
+  // Garante as opções mesmo se o carregamento inicial ainda não terminou
+  renderCategoryOptions();
+  loadCategories();
   document.getElementById("modal-title").textContent = "➕ Adicionar Produto";
   document.getElementById("product-form").reset();
   document.getElementById("product-id").value = "";
@@ -783,6 +798,7 @@ async function editProduct(id) {
   const product = products.find((p) => p.id === id);
 
   if (product) {
+    renderCategoryOptions();
     document.getElementById("modal-title").textContent = "✏️ Editar Produto";
     document.getElementById("product-id").value = product.id;
     document.getElementById("product-name").value = product.name;
@@ -858,23 +874,43 @@ async function handleSaveProduct(e) {
       status: soldOut ? "sold-out" : "available",
       soldOut,
       isNew: false,
-      createdAt: id ? undefined : new Date().toISOString(),
     };
 
-    let products = await getProductsFromFirebase();
-
-    if (id) {
-      // Ao editar, preserva o firebaseKey e outros campos importantes
-      products = products.map((p) =>
-        p.id === id ? { ...p, ...product, firebaseKey: p.firebaseKey } : p,
-      );
-      showNotification("✅ Produto atualizado com sucesso!", "success");
-    } else {
-      products.push(product);
-      showNotification("✅ Produto adicionado com sucesso!", "success");
+    if (!window.FirebaseProductService || !window.firebaseInitialized) {
+      showNotification("❌ Firebase não está disponível.", "error");
+      return;
     }
 
-    await saveProducts(products);
+    // Grava só este produto (add/update), sem reescrever o catálogo inteiro
+    let result;
+    if (id) {
+      const existing = (await getProductsFromFirebase()).find(
+        (p) => p.id === id,
+      );
+      if (!existing || !existing.firebaseKey) {
+        showNotification("❌ Produto não encontrado para editar.", "error");
+        return;
+      }
+      result = await window.FirebaseProductService.update(
+        existing.firebaseKey,
+        product,
+      );
+    } else {
+      result = await window.FirebaseProductService.add(product);
+    }
+
+    // Só avisa sucesso depois que o Firebase aceitou a gravação
+    if (!result.success) {
+      showNotification(`❌ Não foi possível salvar: ${result.error}`, "error");
+      return;
+    }
+
+    showNotification(
+      id
+        ? "✅ Produto atualizado com sucesso!"
+        : "✅ Produto adicionado com sucesso!",
+      "success",
+    );
     await loadProducts();
     closeModal();
   } finally {
@@ -911,7 +947,7 @@ async function toggleProductStatus(id) {
     }
 
     // Atualiza LocalStorage
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(products));
+    cacheProducts(products);
 
     await loadProducts();
 
@@ -951,7 +987,7 @@ async function deleteProduct(id) {
       }
 
       // Atualiza LocalStorage também
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(products));
+      cacheProducts(products);
       devLog(`🗑️ Produto removido do LocalStorage`);
 
       await loadProducts();
@@ -1024,7 +1060,7 @@ async function syncAllToFirebase() {
     }
     // Se há produtos no Firebase, sincroniza com LocalStorage
     else if (firebaseProducts.length > 0) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(firebaseProducts));
+      cacheProducts(firebaseProducts);
       showNotification(
         `✅ ${firebaseProducts.length} produtos sincronizados do Firebase!`,
         "success",
@@ -1033,7 +1069,7 @@ async function syncAllToFirebase() {
     // Se ambos estão vazios, mantém vazio (produtos foram intencionalmente deletados)
     else {
       devLog("📭 Nenhum produto encontrado - mantendo catálogo vazio");
-      localStorage.setItem(STORAGE_KEY, JSON.stringify([]));
+      cacheProducts([]);
       showNotification(
         "✅ Sincronização completa - catálogo está vazio",
         "success",
@@ -1082,7 +1118,7 @@ async function importInitialProducts() {
     await window.FirebaseProductService.saveAll(allProducts);
 
     // Sincroniza LocalStorage
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(allProducts));
+    cacheProducts(allProducts);
 
     await loadProducts();
     await updateStats();
@@ -1124,18 +1160,113 @@ function generateId() {
   return "prod_" + Date.now() + "_" + Math.random().toString(36).substr(2, 9);
 }
 
-function convertImageToBase64(file) {
+// Imagens vão dentro do banco (base64): reduzidas para manter o site leve
+const IMAGE_MAX_SIZE = 800; // lado maior, em px
+const IMAGE_QUALITY = 0.8;
+const IMAGE_MAX_UPLOAD = 15 * 1024 * 1024; // arquivo original aceito
+
+/**
+ * Reduz uma imagem (File, Blob ou URL data:) para JPEG de até IMAGE_MAX_SIZE px
+ */
+function compressImage(source) {
   return new Promise((resolve, reject) => {
-    if (file.size > 500000) {
-      reject("Imagem muito grande! Escolha uma imagem menor que 500KB.");
-      return;
+    const img = new Image();
+    const objectUrl = source instanceof Blob ? URL.createObjectURL(source) : null;
+
+    img.onload = () => {
+      if (objectUrl) URL.revokeObjectURL(objectUrl);
+      const scale = Math.min(
+        1,
+        IMAGE_MAX_SIZE / Math.max(img.naturalWidth, img.naturalHeight),
+      );
+      const canvas = document.createElement("canvas");
+      canvas.width = Math.round(img.naturalWidth * scale);
+      canvas.height = Math.round(img.naturalHeight * scale);
+
+      const ctx = canvas.getContext("2d");
+      // JPEG não tem transparência: fundo branco evita áreas pretas em PNG
+      ctx.fillStyle = "#fff";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+      resolve(canvas.toDataURL("image/jpeg", IMAGE_QUALITY));
+    };
+    img.onerror = () => {
+      if (objectUrl) URL.revokeObjectURL(objectUrl);
+      reject("Não foi possível ler a imagem. Tente outro arquivo.");
+    };
+    img.src = objectUrl || source;
+  });
+}
+
+function convertImageToBase64(file) {
+  if (file.size > IMAGE_MAX_UPLOAD) {
+    return Promise.reject("Imagem muito grande! Escolha uma menor que 15MB.");
+  }
+  return compressImage(file);
+}
+
+/**
+ * Recomprime as imagens base64 já cadastradas (uma gravação por produto)
+ */
+async function recompressExistingImages() {
+  const btn = document.getElementById("btn-recompress");
+  const originalText = btn.textContent;
+
+  if (!window.FirebaseProductService || !window.firebaseInitialized) {
+    showNotification("❌ Firebase não está disponível.", "error");
+    return;
+  }
+  if (!confirm("Reduzir o tamanho das imagens já cadastradas?")) return;
+
+  btn.disabled = true;
+  try {
+    const products = await getProductsFromFirebase();
+    // Só imagens base64 acima de ~150KB valem a pena
+    const heavy = products.filter(
+      (p) =>
+        p.firebaseKey &&
+        typeof p.image === "string" &&
+        p.image.startsWith("data:image") &&
+        p.image.length > 150000,
+    );
+
+    let done = 0;
+    let failed = 0;
+    let savedBytes = 0;
+    for (const p of heavy) {
+      btn.textContent = `🗜️ ${done + failed + 1}/${heavy.length}...`;
+      try {
+        const smaller = await compressImage(p.image);
+        if (smaller.length >= p.image.length) continue; // já estava leve
+        const result = await window.FirebaseProductService.update(
+          p.firebaseKey,
+          { image: smaller },
+        );
+        if (!result.success) throw new Error(result.error);
+        savedBytes += p.image.length - smaller.length;
+        done++;
+      } catch (error) {
+        failed++;
+        devError(`Erro ao otimizar "${p.name}":`, error);
+      }
     }
 
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  });
+    await loadProducts();
+    const mb = (savedBytes / 1024 / 1024).toFixed(1);
+    showNotification(
+      failed
+        ? `⚠️ ${done} otimizadas (${mb}MB a menos), ${failed} falharam.`
+        : `✅ ${done} imagens otimizadas (${mb}MB a menos).`,
+      failed ? "error" : "success",
+    );
+  } catch (error) {
+    devError("Erro ao otimizar imagens:", error);
+    showNotification("❌ Erro ao otimizar imagens.", "error");
+  } finally {
+    btn.disabled = false;
+    btn.textContent = originalText;
+  }
 }
 
 function showNotification(message, type = "success") {
