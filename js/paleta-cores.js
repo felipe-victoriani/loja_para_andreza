@@ -1,9 +1,9 @@
 /* ========================================
    MÓDULO PALETA DE CORES IDEAL
-   Tom de pele + formato de rosto -> paleta de maquiagem sugerida
+   Tom de pele + subtom + formato de rosto -> paleta de maquiagem sugerida
 
    Estrutura:
-   1. Dados (tons de pele, formatos de rosto)
+   1. Dados (tons de pele, subtons, formatos de rosto)
    2. Controller (seleção + render do resultado)
    3. Inicialização
 ======================================== */
@@ -12,51 +12,130 @@
 // 1. DADOS
 // ========================================
 
-// Cada tom de pele tem uma paleta de maquiagem (base, blush, lábios, olhos)
+// Cada tom de pele tem uma paleta por subtom (base, blush, lábios, olhos)
+// quente: dourado/pêssego/coral/terracota · frio: rosado/berry/ameixa/prata · neutro: equilíbrio entre os dois
 const SKIN_TONES = [
   {
     id: "clara",
     label: "Pele Clara",
     swatch: "#f3d9c4",
-    palette: {
-      Base: ["#f7e6d7", "#f0d5bf"],
-      Blush: ["#f7b7c5", "#f29fb3"],
-      Lábios: ["#e8899c", "#d46a82"],
-      Olhos: ["#d9b3ba", "#b98fa0", "#9b7e8f"],
+    palettes: {
+      quente: {
+        Base: ["#f5dfc5", "#eccfae"],
+        Blush: ["#f8b89a", "#f29c80"],
+        Lábios: ["#e8836b", "#d0684f"],
+        Olhos: ["#e3c08d", "#c99a6b", "#a8774f"],
+      },
+      frio: {
+        Base: ["#f6e1db", "#efd0c8"],
+        Blush: ["#f5b3c8", "#e897b3"],
+        Lábios: ["#e07a9a", "#c45a7d"],
+        Olhos: ["#d7c4d6", "#a99ab3", "#8a8a9e"],
+      },
+      neutro: {
+        Base: ["#f7e6d7", "#f0d5bf"],
+        Blush: ["#f7b7c5", "#f29fb3"],
+        Lábios: ["#e8899c", "#d46a82"],
+        Olhos: ["#d9b3ba", "#b98fa0", "#9b7e8f"],
+      },
     },
   },
   {
     id: "media",
     label: "Pele Média",
     swatch: "#d9ad85",
-    palette: {
-      Base: ["#e3bd94", "#d4a67c"],
-      Blush: ["#e8899c", "#c96f84"],
-      Lábios: ["#c96f84", "#a85570"],
-      Olhos: ["#b98fa0", "#9b7e8f", "#7b636a"],
+    palettes: {
+      quente: {
+        Base: ["#e2b98a", "#d3a270"],
+        Blush: ["#ea9474", "#d9785a"],
+        Lábios: ["#c9634a", "#a84e3a"],
+        Olhos: ["#d4a55c", "#b07a45", "#7d5a3c"],
+      },
+      frio: {
+        Base: ["#e0b8a0", "#d0a28a"],
+        Blush: ["#d9809e", "#c06688"],
+        Lábios: ["#b24d74", "#93395e"],
+        Olhos: ["#a88aa8", "#7e6a8a", "#5d5f78"],
+      },
+      neutro: {
+        Base: ["#e3bd94", "#d4a67c"],
+        Blush: ["#e8899c", "#c96f84"],
+        Lábios: ["#c96f84", "#a85570"],
+        Olhos: ["#b98fa0", "#9b7e8f", "#7b636a"],
+      },
     },
   },
   {
     id: "morena",
     label: "Pele Morena",
     swatch: "#b97a52",
-    palette: {
-      Base: ["#c48a60", "#a9713f"],
-      Blush: ["#c96f84", "#a85570"],
-      Lábios: ["#a85570", "#8c3f58"],
-      Olhos: ["#9b7e8f", "#7b636a", "#c4a882"],
+    palettes: {
+      quente: {
+        Base: ["#c58b58", "#a8713f"],
+        Blush: ["#cc6f4e", "#b0573b"],
+        Lábios: ["#a8452f", "#8a3524"],
+        Olhos: ["#c9963f", "#9a6a35", "#5f6b3a"],
+      },
+      frio: {
+        Base: ["#bf8a6c", "#a37158"],
+        Blush: ["#b8577a", "#9c4466"],
+        Lábios: ["#8f3657", "#732845"],
+        Olhos: ["#8e6b8e", "#6b4f73", "#3f4a6b"],
+      },
+      neutro: {
+        Base: ["#c48a60", "#a9713f"],
+        Blush: ["#c96f84", "#a85570"],
+        Lábios: ["#a85570", "#8c3f58"],
+        Olhos: ["#9b7e8f", "#7b636a", "#c4a882"],
+      },
     },
   },
   {
     id: "negra",
     label: "Pele Negra",
     swatch: "#6b4327",
-    palette: {
-      Base: ["#7a4f30", "#5e3a21"],
-      Blush: ["#a85570", "#8c3f58"],
-      Lábios: ["#8c3f58", "#6e2d44"],
-      Olhos: ["#c4a882", "#7b636a", "#2a1c20"],
+    palettes: {
+      quente: {
+        Base: ["#7d4f2c", "#603b1f"],
+        Blush: ["#b2532f", "#93401f"],
+        Lábios: ["#8a2f1f", "#6b2416"],
+        Olhos: ["#d4a23a", "#a8642a", "#3d2a17"],
+      },
+      frio: {
+        Base: ["#76503e", "#5a3b2e"],
+        Blush: ["#9c3f68", "#7e2f55"],
+        Lábios: ["#6e2346", "#521a35"],
+        Olhos: ["#a68fb0", "#5b3f6e", "#1f2440"],
+      },
+      neutro: {
+        Base: ["#7a4f30", "#5e3a21"],
+        Blush: ["#a85570", "#8c3f58"],
+        Lábios: ["#8c3f58", "#6e2d44"],
+        Olhos: ["#c4a882", "#7b636a", "#2a1c20"],
+      },
     },
+  },
+];
+
+// Subtom: define a "temperatura" da paleta. Neutro também serve para quem não sabe.
+const UNDERTONES = [
+  {
+    id: "quente",
+    label: "Quente",
+    desc: "Veias esverdeadas, dourado valoriza",
+    swatch: "#e0a96d",
+  },
+  {
+    id: "frio",
+    label: "Frio",
+    desc: "Veias azuladas ou roxas, prata valoriza",
+    swatch: "#c9a0b8",
+  },
+  {
+    id: "neutro",
+    label: "Neutro",
+    desc: "Um pouco de cada, ou não sei",
+    swatch: "#d4b5a0",
   },
 ];
 
@@ -100,10 +179,12 @@ const FACE_SHAPES = [
 
 const PaletaController = {
   selectedTone: null,
+  selectedUndertone: null,
   selectedShape: null,
 
   init() {
     this.renderToneCards();
+    this.renderUndertoneCards();
     this.renderShapeCards();
     this.bindEvents();
   },
@@ -116,6 +197,20 @@ const PaletaController = {
         <button type="button" class="option-card" data-type="tone" data-id="${tone.id}" aria-pressed="false">
           <span class="swatch-circle" style="background:${tone.swatch}"></span>
           <span class="option-label">${tone.label}</span>
+        </button>
+      `,
+    ).join("");
+  },
+
+  renderUndertoneCards() {
+    const grid = document.getElementById("undertone-grid");
+    if (!grid) return;
+    grid.innerHTML = UNDERTONES.map(
+      (ut) => `
+        <button type="button" class="option-card" data-type="undertone" data-id="${ut.id}" aria-pressed="false">
+          <span class="swatch-circle" style="background:${ut.swatch}"></span>
+          <span class="option-label">${ut.label}</span>
+          <span class="option-desc">${ut.desc}</span>
         </button>
       `,
     ).join("");
@@ -160,6 +255,7 @@ const PaletaController = {
     card.setAttribute("aria-pressed", "true");
 
     if (type === "tone") this.selectedTone = id;
+    if (type === "undertone") this.selectedUndertone = id;
     if (type === "shape") this.selectedShape = id;
 
     this.renderResult();
@@ -193,15 +289,17 @@ const PaletaController = {
     const resultContainer = resultSection?.querySelector(".container");
     if (!resultContainer) return;
 
-    if (!this.selectedTone || !this.selectedShape) {
+    // Só mostra o resultado com os 3 passos respondidos
+    if (!this.selectedTone || !this.selectedUndertone || !this.selectedShape) {
       resultSection.classList.remove("visible");
       return;
     }
 
     const tone = SKIN_TONES.find((t) => t.id === this.selectedTone);
+    const undertone = UNDERTONES.find((u) => u.id === this.selectedUndertone);
     const shape = FACE_SHAPES.find((s) => s.id === this.selectedShape);
 
-    const paletteHtml = Object.entries(tone.palette)
+    const paletteHtml = Object.entries(tone.palettes[undertone.id])
       .map(
         ([category, colors]) => `
           <div class="palette-category">
@@ -221,7 +319,7 @@ const PaletaController = {
 
     resultContainer.innerHTML = `
       <h3><i data-lucide="sparkles"></i> Sua Paleta Ideal</h3>
-      <p class="result-subtitle">${tone.label} + Rosto ${shape.label}</p>
+      <p class="result-subtitle">${tone.label} · Subtom ${undertone.label} · Rosto ${shape.label}</p>
       <div class="palette-grid">${paletteHtml}</div>
       <div class="face-tip">
         <i data-lucide="lightbulb"></i>

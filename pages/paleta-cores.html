@@ -56,7 +56,7 @@
       <div class="container">
         <h2><i data-lucide="palette"></i> Paleta de Cores Ideal</h2>
         <p>
-          Escolha seu tom de pele e o formato do seu rosto para descobrir as
+          Escolha seu tom de pele, subtom e formato do rosto para descobrir as
           cores de maquiagem que mais valorizam sua beleza.
         </p>
       </div>
@@ -87,10 +87,23 @@
       </div>
     </section>
 
-    <!-- PASSO 2: FORMATO DO ROSTO -->
+    <!-- PASSO 2: SUBTOM -->
     <section class="palette-step">
       <div class="container">
-        <h3><i data-lucide="scan-face"></i> 2. Qual o formato do seu rosto?</h3>
+        <h3><i data-lucide="thermometer-sun"></i> 2. Qual o seu subtom?</h3>
+        <p class="step-hint">
+          Olhe as veias do pulso na luz natural: esverdeadas indicam subtom
+          quente; azuladas ou roxas, frio. Se não der para dizer, escolha
+          neutro.
+        </p>
+        <div class="option-grid" id="undertone-grid"></div>
+      </div>
+    </section>
+
+    <!-- PASSO 3: FORMATO DO ROSTO -->
+    <section class="palette-step">
+      <div class="container">
+        <h3><i data-lucide="scan-face"></i> 3. Qual o formato do seu rosto?</h3>
         <div class="option-grid" id="shape-grid"></div>
       </div>
     </section>
