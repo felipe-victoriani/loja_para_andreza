@@ -313,13 +313,26 @@ body {
 }
 
 /* Menu Mobile */
+/* Hambúrguer de 3 traços (44x44 = área de toque mínima) */
 .menu-toggle {
   display: none;
   flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
   background: none;
   border: none;
+  border-radius: var(--radius-sm);
   cursor: pointer;
-  padding: var(--spacing-xs);
+  padding: 0;
+}
+
+.menu-toggle:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
 }
 
 .menu-toggle span {
@@ -329,6 +342,25 @@ body {
   display: block;
   transition: var(--transition-fast);
   border-radius: 2px;
+}
+
+/* Aberto: traços viram um X (7px = gap 5px + altura 2px) */
+.menu-toggle.active span:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+
+.menu-toggle.active span:nth-child(2) {
+  opacity: 0;
+}
+
+.menu-toggle.active span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .menu-toggle span {
+    transition: none;
+  }
 }
 
 /* ========================================

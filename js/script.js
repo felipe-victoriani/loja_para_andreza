@@ -118,17 +118,21 @@ const MenuController = {
     const nav = document.querySelector(".nav");
 
     if (menuToggle && nav) {
+      // Abre/fecha mantendo aria-expanded em sincronia (leitor de tela)
+      const setOpen = (open) => {
+        nav.classList.toggle("active", open);
+        menuToggle.classList.toggle("active", open);
+        menuToggle.setAttribute("aria-expanded", String(open));
+      };
+      setOpen(false);
+
       menuToggle.addEventListener("click", () => {
-        nav.classList.toggle("active");
-        menuToggle.classList.toggle("active");
+        setOpen(!nav.classList.contains("active"));
       });
 
       // Fechar ao clicar em um link
       document.querySelectorAll(".nav-link").forEach((link) => {
-        link.addEventListener("click", () => {
-          nav.classList.remove("active");
-          menuToggle.classList.remove("active");
-        });
+        link.addEventListener("click", () => setOpen(false));
       });
 
       // Fechar ao clicar fora do menu
@@ -138,8 +142,7 @@ const MenuController = {
           !nav.contains(e.target) &&
           !menuToggle.contains(e.target)
         ) {
-          nav.classList.remove("active");
-          menuToggle.classList.remove("active");
+          setOpen(false);
         }
       });
     }
