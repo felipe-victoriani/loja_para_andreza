@@ -79,32 +79,43 @@
       </div>
     </section>
 
-    <!-- PASSO 1: TOM DE PELE -->
-    <section class="palette-step">
-      <div class="container">
-        <h3><i data-lucide="user-round"></i> 1. Qual o seu tom de pele?</h3>
-        <div class="option-grid" id="tone-grid"></div>
-      </div>
-    </section>
+    <!-- BUILDER: passos à esquerda + avatar que se monta a cada escolha -->
+    <section class="palette-builder">
+      <div class="container builder-grid">
+        <!-- AVATAR AO VIVO (sticky; no celular fica no topo dos passos) -->
+        <aside class="avatar-panel" aria-label="Prévia do avatar">
+          <div class="avatar-frame" id="avatar-live"></div>
+          <p class="avatar-status" id="avatar-status">
+            Escolha seu tom de pele
+          </p>
+        </aside>
 
-    <!-- PASSO 2: SUBTOM -->
-    <section class="palette-step">
-      <div class="container">
-        <h3><i data-lucide="thermometer-sun"></i> 2. Qual o seu subtom?</h3>
-        <p class="step-hint">
-          Olhe as veias do pulso na luz natural: esverdeadas indicam subtom
-          quente; azuladas ou roxas, frio. Se não der para dizer, escolha
-          neutro.
-        </p>
-        <div class="option-grid" id="undertone-grid"></div>
-      </div>
-    </section>
+        <div class="builder-steps">
+          <!-- PASSO 1: TOM DE PELE -->
+          <div class="palette-step">
+            <h3><i data-lucide="user-round"></i> 1. Qual o seu tom de pele?</h3>
+            <div class="option-grid" id="tone-grid"></div>
+          </div>
 
-    <!-- PASSO 3: FORMATO DO ROSTO -->
-    <section class="palette-step">
-      <div class="container">
-        <h3><i data-lucide="scan-face"></i> 3. Qual o formato do seu rosto?</h3>
-        <div class="option-grid" id="shape-grid"></div>
+          <!-- PASSO 2: SUBTOM -->
+          <div class="palette-step">
+            <h3><i data-lucide="thermometer-sun"></i> 2. Qual o seu subtom?</h3>
+            <p class="step-hint">
+              Olhe as veias do pulso na luz natural: esverdeadas indicam
+              subtom quente; azuladas ou roxas, frio. Se não der para dizer,
+              escolha neutro.
+            </p>
+            <div class="option-grid" id="undertone-grid"></div>
+          </div>
+
+          <!-- PASSO 3: FORMATO DO ROSTO -->
+          <div class="palette-step">
+            <h3>
+              <i data-lucide="scan-face"></i> 3. Qual o formato do seu rosto?
+            </h3>
+            <div class="option-grid" id="shape-grid"></div>
+          </div>
+        </div>
       </div>
     </section>
 

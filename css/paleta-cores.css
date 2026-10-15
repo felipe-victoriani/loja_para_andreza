@@ -38,8 +38,61 @@
   object-fit: cover;
 }
 
+/* Builder: passos + avatar ao vivo */
+.palette-builder {
+  padding: var(--spacing-md) 0 var(--spacing-lg);
+}
+
+.builder-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 260px;
+  gap: var(--spacing-md);
+  align-items: start;
+}
+
+.builder-steps {
+  min-width: 0;
+}
+
+/* Avatar fica na coluna da direita, acompanhando a rolagem */
+.avatar-panel {
+  order: 2;
+  position: sticky;
+  top: calc(var(--header-h, 72px) + var(--spacing-sm));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-sm);
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.avatar-frame {
+  width: 100%;
+  max-width: 220px;
+  aspect-ratio: 200 / 220;
+  border-radius: var(--radius-md);
+  background: var(--primary-soft);
+  overflow: hidden;
+}
+
+.avatar-frame svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.avatar-status {
+  margin: 0;
+  font-size: 0.88rem;
+  color: var(--text-mid);
+  text-align: center;
+}
+
 .palette-step {
-  padding: var(--spacing-lg) 0;
+  padding: var(--spacing-md) 0;
 }
 
 .palette-step h3 {
@@ -145,12 +198,25 @@
   margin-bottom: var(--spacing-md);
 }
 
+/* Resultado: avatar ao lado das cores */
+.result-layout {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: var(--spacing-md);
+  align-items: center;
+  max-width: 900px;
+  margin: 0 auto var(--spacing-md);
+}
+
+.avatar-result {
+  border: 1px solid var(--border);
+  background: var(--white);
+}
+
 .palette-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   gap: var(--spacing-md);
-  max-width: 800px;
-  margin: 0 auto var(--spacing-md);
 }
 
 .palette-category h4 {
@@ -179,6 +245,12 @@
 
 .palette-swatch:hover {
   transform: scale(1.08);
+}
+
+/* Cor aplicada no avatar agora */
+.palette-swatch.active {
+  outline: 2px solid var(--dark-text);
+  outline-offset: 2px;
 }
 
 /* Foco visível para navegação por teclado */
@@ -244,6 +316,46 @@
   color: var(--text-mid);
   font-size: 0.92rem;
   margin: 0;
+}
+
+/* Tablet/celular: avatar vira uma barra compacta presa no topo dos passos */
+@media (max-width: 860px) {
+  .builder-grid {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .avatar-panel {
+    order: 0;
+    top: var(--header-h, 64px);
+    z-index: 10;
+    flex-direction: row;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    margin: 0 calc(-1 * var(--spacing-sm));
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-width: 0 0 1px;
+    border-radius: 0;
+  }
+
+  .avatar-panel .avatar-frame {
+    width: 84px;
+    flex-shrink: 0;
+  }
+
+  .avatar-status {
+    text-align: left;
+    max-width: 200px;
+  }
+
+  .result-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .avatar-result {
+    max-width: 200px;
+    margin: 0 auto;
+  }
 }
 
 @media (max-width: 600px) {
