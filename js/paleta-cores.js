@@ -113,7 +113,7 @@ const PaletaController = {
     if (!grid) return;
     grid.innerHTML = SKIN_TONES.map(
       (tone) => `
-        <button class="option-card" data-type="tone" data-id="${tone.id}" aria-pressed="false">
+        <button type="button" class="option-card" data-type="tone" data-id="${tone.id}" aria-pressed="false">
           <span class="swatch-circle" style="background:${tone.swatch}"></span>
           <span class="option-label">${tone.label}</span>
         </button>
@@ -126,7 +126,7 @@ const PaletaController = {
     if (!grid) return;
     grid.innerHTML = FACE_SHAPES.map(
       (shape) => `
-        <button class="option-card" data-type="shape" data-id="${shape.id}" aria-pressed="false">
+        <button type="button" class="option-card" data-type="shape" data-id="${shape.id}" aria-pressed="false">
           <i data-lucide="${shape.icon}"></i>
           <span class="option-label">${shape.label}</span>
         </button>
@@ -135,44 +135,63 @@ const PaletaController = {
     if (window.lucide) lucide.createIcons();
   },
 
+  // Um único listener delegado: trata cards de opção e swatches do resultado
   bindEvents() {
     document.body.addEventListener("click", (e) => {
-      const card = e.target.closest(".option-card");
-      if (!card) return;
-
-      const type = card.dataset.type;
-      const id = card.dataset.id;
-      const siblings = card.parentElement.querySelectorAll(".option-card");
-
-      siblings.forEach((el) => {
-        el.classList.remove("selected");
-        el.setAttribute("aria-pressed", "false");
-      });
-      card.classList.add("selected");
-      card.setAttribute("aria-pressed", "true");
-
-      if (type === "tone") this.selectedTone = id;
-      if (type === "shape") this.selectedShape = id;
-
-      this.renderResult();
-    });
-
-    // Copiar hex ao clicar num swatch do resultado
-    document.body.addEventListener("click", (e) => {
       const swatch = e.target.closest(".palette-swatch");
-      if (!swatch) return;
-      const hex = swatch.dataset.hex;
-      navigator.clipboard?.writeText(hex).then(() => {
-        const original = swatch.title;
-        swatch.title = "Copiado!";
-        setTimeout(() => (swatch.title = original), 1200);
-      });
+      if (swatch) return this.copyHex(swatch.dataset.hex);
+
+      const card = e.target.closest(".option-card");
+      if (card) this.selectOption(card);
     });
+  },
+
+  // Marca o card escolhido no seu grupo e atualiza o resultado
+  selectOption(card) {
+    const type = card.dataset.type;
+    const id = card.dataset.id;
+    const siblings = card.parentElement.querySelectorAll(".option-card");
+
+    siblings.forEach((el) => {
+      el.classList.remove("selected");
+      el.setAttribute("aria-pressed", "false");
+    });
+    card.classList.add("selected");
+    card.setAttribute("aria-pressed", "true");
+
+    if (type === "tone") this.selectedTone = id;
+    if (type === "shape") this.selectedShape = id;
+
+    this.renderResult();
+  },
+
+  // Copia o hex e avisa na tela (clipboard só existe em HTTPS/localhost)
+  copyHex(hex) {
+    if (!navigator.clipboard) {
+      this.showToast(`Cor ${hex}. Copie manualmente.`);
+      return;
+    }
+    navigator.clipboard
+      .writeText(hex)
+      .then(() => this.showToast(`Cor ${hex} copiada!`))
+      .catch(() => this.showToast(`Não foi possível copiar ${hex}.`));
+  },
+
+  // Toast visível + anunciado por leitor de tela (região aria-live no HTML)
+  showToast(message) {
+    const toast = document.getElementById("palette-toast");
+    if (!toast) return;
+    toast.textContent = message;
+    toast.classList.add("visible");
+    clearTimeout(this.toastTimer);
+    this.toastTimer = setTimeout(() => toast.classList.remove("visible"), 2000);
   },
 
   renderResult() {
     const resultSection = document.getElementById("resultado");
-    if (!resultSection) return;
+    // Renderiza dentro do .container para manter largura/gutter do layout
+    const resultContainer = resultSection?.querySelector(".container");
+    if (!resultContainer) return;
 
     if (!this.selectedTone || !this.selectedShape) {
       resultSection.classList.remove("visible");
@@ -191,7 +210,7 @@ const PaletaController = {
               ${colors
                 .map(
                   (hex) =>
-                    `<button class="palette-swatch" style="background:${hex}" data-hex="${hex}" title="${hex}"></button>`,
+                    `<button type="button" class="palette-swatch" style="background:${hex}" data-hex="${hex}" title="${hex}" aria-label="Copiar cor ${hex} (${category})"></button>`,
                 )
                 .join("")}
             </div>
@@ -200,7 +219,7 @@ const PaletaController = {
       )
       .join("");
 
-    resultSection.innerHTML = `
+    resultContainer.innerHTML = `
       <h3><i data-lucide="sparkles"></i> Sua Paleta Ideal</h3>
       <p class="result-subtitle">${tone.label} + Rosto ${shape.label}</p>
       <div class="palette-grid">${paletteHtml}</div>
@@ -212,7 +231,9 @@ const PaletaController = {
     `;
     resultSection.classList.add("visible");
     if (window.lucide) lucide.createIcons();
-    resultSection.scrollIntoView({ behavior: "smooth", block: "start" });
+    // Respeita quem prefere menos movimento
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    resultSection.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
   },
 };
 

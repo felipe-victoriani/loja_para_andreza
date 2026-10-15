@@ -156,8 +156,52 @@
   cursor: pointer;
 }
 
+.palette-swatch {
+  transition: transform 0.15s ease;
+}
+
 .palette-swatch:hover {
   transform: scale(1.08);
+}
+
+/* Foco visível para navegação por teclado */
+.palette-swatch:focus-visible,
+.option-card:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+/* Toast de "cor copiada": fixo no rodapé, discreto */
+.palette-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translate(-50%, 12px);
+  max-width: calc(100% - 32px);
+  padding: 0.7rem 1.2rem;
+  border-radius: var(--radius-sm);
+  background: var(--dark-text);
+  color: var(--white);
+  font-size: 0.9rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  z-index: 10000;
+}
+
+.palette-toast.visible {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .palette-swatch,
+  .palette-toast {
+    transition: none;
+  }
+  .palette-swatch:hover {
+    transform: none;
+  }
 }
 
 .face-tip {
